@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GraphicSuite Pro - Gestion pour Infographe</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="app-layout">
+      <!-- Barre latérale -->
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="logo"><i class="fa-solid fa-palette"></i></div>
+          <h2>Graphic<span>Suite</span></h2>
+        </div>
+
+        <nav class="nav-menu">
+          <button class="nav-btn active" data-view="dashboard">
+            <i class="fa-solid fa-chart-pie"></i> Tableau de bord
+          </button>
+          <button class="nav-btn" data-view="projects">
+            <i class="fa-solid fa-layer-group"></i> Projets & Kanban
+          </button>
+          <button class="nav-btn" data-view="expenses">
+            <i class="fa-solid fa-receipt"></i> Dépenses
+          </button>
+          <button class="nav-btn" data-view="clients">
+            <i class="fa-solid fa-users"></i> Clients
+          </button>
+          <button class="nav-btn" data-view="billing">
+            <i class="fa-solid fa-file-invoice-dollar"></i> Devis & Factures
+          </button>
+        </nav>
+        <button class="btn btn-secondary btn-settings" id="btn-settings">
+          <i class="fa-solid fa-gear"></i> Paramètres
+        </button>
+
+        <div class="currency-selector">
+          <label for="currency-select"
+            ><i class="fa-solid fa-coins"></i> Devise :</label
+          >
+          <select id="currency-select">
+            <option value="FCFA">FCFA (XOF)</option>
+            <option value="EUR">Euro (€)</option>
+            <option value="USD">Dollar ($)</option>
+          </select>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="backup-actions">
+            <button class="btn btn-secondary btn-sm" id="btn-export">
+              <i class="fa-solid fa-download"></i> Sauvegarder
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btn-import">
+              <i class="fa-solid fa-upload"></i> Restaurer
+            </button>
+            <input type="file" id="import-file" accept=".json" hidden />
+          </div>
+          <p>GraphicSuite v1.2</p>
+        </div>
+      </aside>
+
+      <!-- Contenu principal -->
+      <main class="main-content">
+        <header class="top-header">
+          <div class="header-title">
+            <h1 id="page-title">Tableau de bord</h1>
+            <p id="page-subtitle">Aperçu général de votre activité créative</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-secondary" id="btn-quick-client">
+              <i class="fa-solid fa-user-plus"></i> Nouveau Client
+            </button>
+            <button class="btn btn-primary" id="btn-quick-project">
+              <i class="fa-solid fa-plus"></i> Nouveau Projet
+            </button>
+          </div>
+        </header>
+
+        <!-- Vue 1 : Tableau de bord -->
+        <section id="view-dashboard" class="view active-view">
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-icon gold">
+                <i class="fa-solid fa-wallet"></i>
+              </div>
+              <div class="kpi-info">
+                <span>Chiffre d'affaires</span>
+                <h3 id="stat-revenue">0 FCFA</h3>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon red">
+                <i class="fa-solid fa-hourglass-half"></i>
+              </div>
+              <div class="kpi-info">
+                <span>À encaisser</span>
+                <h3 id="stat-pending">0 FCFA</h3>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon red">
+                <i class="fa-solid fa-receipt"></i>
+              </div>
+              <div class="kpi-info">
+                <span>Dépenses totales</span>
+                <h3 id="stat-expenses">0 FCFA</h3>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon green">
+                <i class="fa-solid fa-sack-dollar"></i>
+              </div>
+              <div class="kpi-info">
+                <span>Bénéfice net</span>
+                <h3 id="stat-profit">0 FCFA</h3>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon blue">
+                <i class="fa-solid fa-spinner"></i>
+              </div>
+              <div class="kpi-info">
+                <span>Projets en cours</span>
+                <h3 id="stat-active">0</h3>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon green">
+                <i class="fa-solid fa-circle-check"></i>
+              </div>
+              <div class="kpi-info">
+                <span>Projets livrés</span>
+                <h3 id="stat-completed">0</h3>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon purple">
+                <i class="fa-solid fa-address-book"></i>
+              </div>
+              <div class="kpi-info">
+                <span>Total Clients</span>
+                <h3 id="stat-clients">0</h3>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-panels">
+            <div class="glass-panel">
+              <div class="panel-header">
+                <h3>
+                  <i class="fa-solid fa-clock-rotate-left"></i> Derniers Projets
+                </h3>
+                <button class="btn-link" onclick="switchView('projects')">
+                  Voir tout
+                </button>
+              </div>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Projet</th>
+                      <th>Client</th>
+                      <th>Type</th>
+                      <th>Montant</th>
+                      <th>Statut</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recent-projects-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Vue 2 : Projets (Kanban) -->
+        <section id="view-projects" class="view">
+          <div class="filter-bar">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input
+                type="text"
+                id="filter-search"
+                placeholder="Rechercher un projet ou client..."
+              />
+            </div>
+            <div class="filter-group">
+              <select id="filter-type">
+                <option value="all">Tous les types</option>
+                <option value="Logo / Identité Visuelle">
+                  Logo / Identité Visuelle
+                </option>
+                <option value="Flyer / Affiche">Flyer / Affiche</option>
+                <option value="Maquette Web / UI">Maquette Web / UI</option>
+                <option value="Montage Vidéo">Montage Vidéo</option>
+                <option value="Packaging">Packaging</option>
+                <option value="Autre">Autre</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="kanban-board">
+            <div class="kanban-column" data-status="todo">
+              <div class="column-header">
+                <span class="status-indicator todo"></span>
+                <h4>À Faire</h4>
+                <span class="count-badge" id="count-todo">0</span>
+              </div>
+              <div class="kanban-cards" id="cards-todo"></div>
+            </div>
+            <div class="kanban-column" data-status="in-progress">
+              <div class="column-header">
+                <span class="status-indicator in-progress"></span>
+                <h4>En cours</h4>
+                <span class="count-badge" id="count-in-progress">0</span>
+              </div>
+              <div class="kanban-cards" id="cards-in-progress"></div>
+            </div>
+            <div class="kanban-column" data-status="review">
+              <div class="column-header">
+                <span class="status-indicator review"></span>
+                <h4>En révision</h4>
+                <span class="count-badge" id="count-review">0</span>
+              </div>
+              <div class="kanban-cards" id="cards-review"></div>
+            </div>
+            <div class="kanban-column" data-status="done">
+              <div class="column-header">
+                <span class="status-indicator done"></span>
+                <h4>Livré & Payé</h4>
+                <span class="count-badge" id="count-done">0</span>
+              </div>
+              <div class="kanban-cards" id="cards-done"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Vue : Dépenses -->
+        <section id="view-expenses" class="view">
+          <div class="glass-panel">
+            <div class="panel-header">
+              <h3><i class="fa-solid fa-receipt"></i> Dépenses par projet</h3>
+              <button class="btn btn-primary btn-sm" id="btn-add-expense">
+                <i class="fa-solid fa-plus"></i> Ajouter une dépense
+              </button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Projet</th>
+                    <th>Dépense</th>
+                    <th>Montant</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="expenses-tbody"></tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="3"><strong>Total des dépenses</strong></td>
+                    <td colspan="2">
+                      <strong id="expenses-total">0 FCFA</strong>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Vue 3 : Clients -->
+        <section id="view-clients" class="view">
+          <div class="glass-panel">
+            <div class="panel-header">
+              <h3><i class="fa-solid fa-users"></i> Liste des Clients</h3>
+              <button class="btn btn-primary btn-sm" id="btn-add-client">
+                <i class="fa-solid fa-plus"></i> Ajouter un client
+              </button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Nom / Entreprise</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Projets associés</th>
+                    <th>Total Dépensé</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="clients-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Vue 4 : Devis & Factures -->
+        <section id="view-billing" class="view">
+          <div class="billing-container">
+            <div class="billing-form-panel glass-panel no-print">
+              <h3>Générateur de Document</h3>
+              <form id="invoice-form">
+                <div class="form-group">
+                  <label>Choisir un modèle de document</label>
+                  <div class="template-gallery" id="template-gallery"></div>
+                  <div class="accent-row">
+                    <label for="doc-accent">Couleur d'accent</label>
+                    <input type="color" id="doc-accent" value="#d4af37" />
+                    <button
+                      type="button"
+                      class="btn btn-secondary btn-sm"
+                      id="btn-reset-accent"
+                    >
+                      Doré
+                    </button>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="doc-type">Type de document</label>
+                  <select id="doc-type">
+                    <option value="DEVIS">Devis</option>
+                    <option value="FACTURE">Facture</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="doc-client">Client</label>
+                  <select id="doc-client" required>
+                    <option value="">Sélectionner un client</option>
+                  </select>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="doc-number">Numéro</label>
+                    <input type="text" id="doc-number" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="doc-date">Date</label>
+                    <input type="date" id="doc-date" required />
+                  </div>
+                </div>
+
+                <div class="form-group checkbox-row" id="vat-group" hidden>
+                  <label
+                    ><input type="checkbox" id="doc-vat" checked /> Appliquer la
+                    TVA sur ce document</label
+                  >
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="doc-deposit-mode">Acompte</label>
+                    <select id="doc-deposit-mode">
+                      <option value="percent">En %</option>
+                      <option value="amount">Montant fixe</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="doc-deposit">Valeur de l'acompte</label>
+                    <input type="number" id="doc-deposit" min="0" value="0" />
+                  </div>
+                </div>
+
+                <p class="deposit-recap" id="deposit-recap"></p>
+
+                <hr class="divider" />
+                <h4>Lignes de prestation</h4>
+                <div id="invoice-items">
+                  <div class="invoice-item-row">
+                    <input
+                      type="text"
+                      placeholder="Description du service (ex: Création Logo)"
+                      class="item-desc"
+                      required
+                    />
+                    <input
+                      type="number"
+                      placeholder="Qté"
+                      class="item-qty"
+                      value="1"
+                      min="1"
+                      required
+                    />
+                    <input
+                      type="number"
+                      placeholder="Prix Unitaire"
+                      class="item-price"
+                      value="0"
+                      min="0"
+                      required
+                    />
+                    <button
+                      type="button"
+                      class="btn-icon remove-item"
+                      title="Supprimer la ligne"
+                    >
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  class="btn btn-secondary btn-sm"
+                  id="btn-add-item"
+                >
+                  <i class="fa-solid fa-plus"></i> Ajouter une ligne
+                </button>
+
+                <hr class="divider" />
+                <div class="form-group">
+                  <label for="doc-notes">Conditions / Notes de règlement</label>
+                  <textarea
+                    id="doc-notes"
+                    rows="3"
+                    placeholder="Paiement 50% à la commande, 50% à la livraison..."
+                  >
+Acompte de 50% au lancement du projet. Solde à la livraison finale des fichiers sources.</textarea
+                  >
+                </div>
+
+                <div class="billing-actions">
+                  <button type="button" class="btn btn-primary" id="btn-print">
+                    <i class="fa-solid fa-print"></i> Imprimer / Exporter PDF
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Aperçu du document (cible d'impression) -->
+            <div
+              class="invoice-preview-panel glass-panel"
+              id="invoice-paper"
+              data-template="classic"
+            >
+              <div class="invoice-header">
+                <div class="designer-brand" id="preview-brand"></div>
+                <div class="doc-details">
+                  <h1 id="preview-doc-type">DEVIS</h1>
+                  <p>
+                    <strong>N° :</strong> <span id="preview-doc-number"></span>
+                  </p>
+                  <p>
+                    <strong>Date :</strong> <span id="preview-doc-date"></span>
+                  </p>
+                </div>
+              </div>
+
+              <div class="invoice-addresses">
+                <div class="client-bill-to">
+                  <span>DESTINATAIRE :</span>
+                  <h3 id="preview-client-name">Nom du Client</h3>
+                  <p id="preview-client-email">-</p>
+                  <p id="preview-client-phone">-</p>
+                </div>
+              </div>
+
+              <table class="invoice-table">
+                <thead>
+                  <tr>
+                    <th>Description</th>
+                    <th class="text-center">Quantité</th>
+                    <th class="text-right">Prix Unitaire</th>
+                    <th class="text-right">Total</th>
+                  </tr>
+                </thead>
+                <tbody id="preview-items-tbody"></tbody>
+              </table>
+
+              <div class="invoice-summary">
+                <table class="summary-table" id="preview-summary"></table>
+              </div>
+
+              <div class="invoice-footer">
+                <p><strong>Conditions de paiement :</strong></p>
+                <p id="preview-notes"></p>
+                <div class="signature-space">
+                  <p>Bon pour accord (Signature Client)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Modale : Projet -->
+    <div class="modal" id="modal-project">
+      <div class="modal-content glass-panel">
+        <div class="modal-header">
+          <h3 id="modal-project-title">Nouveau Projet</h3>
+          <button type="button" class="close-modal" aria-label="Fermer">
+            &times;
+          </button>
+        </div>
+        <form id="form-project">
+          <input type="hidden" id="project-id" />
+          <div class="form-group">
+            <label for="project-name">Titre du Projet</label>
+            <input
+              type="text"
+              id="project-name"
+              required
+              placeholder="ex: Refonte Logo Entreprise X"
+            />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="project-client">Client</label>
+              <select id="project-client" required></select>
+            </div>
+            <div class="form-group">
+              <label for="project-type">Type de prestation</label>
+              <select id="project-type" required>
+                <option value="Logo / Identité Visuelle">
+                  Logo / Identité Visuelle
+                </option>
+                <option value="Flyer / Affiche">Flyer / Affiche</option>
+                <option value="Maquette Web / UI">Maquette Web / UI</option>
+                <option value="Montage Vidéo">Montage Vidéo</option>
+                <option value="Packaging">Packaging</option>
+                <option value="Autre">Autre</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="project-price">Prix convenu</label>
+              <input
+                type="number"
+                id="project-price"
+                required
+                min="0"
+                placeholder="ex: 75000"
+              />
+            </div>
+            <div class="form-group">
+              <label for="project-status">Statut</label>
+              <select id="project-status">
+                <option value="todo">À Faire</option>
+                <option value="in-progress">En cours</option>
+                <option value="review">En révision</option>
+                <option value="done">Livré & Payé</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="project-deadline">Date limite de livraison</label>
+            <input type="date" id="project-deadline" />
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary close-modal-btn">
+              Annuler
+            </button>
+            <button type="submit" class="btn btn-primary">
+              Enregistrer le projet
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modale : Client -->
+    <div class="modal" id="modal-client">
+      <div class="modal-content glass-panel">
+        <div class="modal-header">
+          <h3>Nouveau Client</h3>
+          <button type="button" class="close-modal" aria-label="Fermer">
+            &times;
+          </button>
+        </div>
+        <form id="form-client">
+          <div class="form-group">
+            <label for="client-name">Nom complet / Entreprise</label>
+            <input
+              type="text"
+              id="client-name"
+              required
+              placeholder="ex: Tech Solutions SARL"
+            />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="client-email">Email</label>
+              <input
+                type="email"
+                id="client-email"
+                placeholder="contact@client.com"
+              />
+            </div>
+            <div class="form-group">
+              <label for="client-phone">Téléphone</label>
+              <input type="tel" id="client-phone" placeholder="+221 77 ..." />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary close-modal-btn">
+              Annuler
+            </button>
+            <button type="submit" class="btn btn-primary">
+              Ajouter Client
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modale : Dépenses d'un projet -->
+    <div class="modal" id="modal-expenses">
+      <div class="modal-content glass-panel">
+        <div class="modal-header">
+          <h3 id="expenses-title">Dépenses</h3>
+          <button type="button" class="close-modal" aria-label="Fermer">
+            &times;
+          </button>
+        </div>
+        <div class="form-group">
+          <label for="expense-project">Projet concerné</label>
+          <select id="expense-project"></select>
+        </div>
+        <p class="deposit-recap" id="expenses-summary"></p>
+        <ul class="expense-list" id="expenses-list"></ul>
+        <form id="form-expense">
+          <div class="form-group">
+            <label for="expense-label"
+              >Dépense (logiciel, impression, sous-traitance,
+              transport...)</label
+            >
+            <input
+              type="text"
+              id="expense-label"
+              required
+              placeholder="ex: Impression des flyers"
+            />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="expense-amount">Montant</label>
+              <input
+                type="number"
+                id="expense-amount"
+                min="0"
+                required
+                placeholder="ex: 15000"
+              />
+            </div>
+            <div class="form-group">
+              <label for="expense-date">Date</label>
+              <input type="date" id="expense-date" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary close-modal-btn">
+              Fermer
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-plus"></i> Ajouter la dépense
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modale : Paramètres de la société -->
+    <div class="modal" id="modal-settings">
+      <div class="modal-content glass-panel">
+        <div class="modal-header">
+          <h3><i class="fa-solid fa-gear"></i> Paramètres de la société</h3>
+          <button type="button" class="close-modal" aria-label="Fermer">
+            &times;
+          </button>
+        </div>
+        <form id="form-settings">
+          <div class="logo-row">
+            <div class="logo-preview" id="set-logo-preview">
+              <i class="fa-regular fa-image"></i>
+            </div>
+            <div>
+              <input
+                type="file"
+                id="set-logo"
+                accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                hidden
+              />
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm"
+                id="btn-pick-logo"
+              >
+                <i class="fa-solid fa-upload"></i> Choisir un logo
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm"
+                id="btn-remove-logo"
+              >
+                Retirer
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="set-name">Nom de la société / du studio</label>
+            <input type="text" id="set-name" required />
+          </div>
+          <div class="form-group">
+            <label for="set-tagline">Activité / slogan</label>
+            <input
+              type="text"
+              id="set-tagline"
+              placeholder="ex: Infographie & Graphic Design"
+            />
+          </div>
+          <div class="form-group">
+            <label for="set-contact">Adresse, email, téléphone</label>
+            <input
+              type="text"
+              id="set-contact"
+              placeholder="ex: Dakar, Sénégal | contact@studio.sn | +221 77 ..."
+            />
+          </div>
+          <div class="form-group">
+            <label for="set-legal">Mentions légales (NINEA, RCCM...)</label>
+            <input
+              type="text"
+              id="set-legal"
+              placeholder="ex: NINEA 00000000 - RCCM SN-DKR-..."
+            />
+          </div>
+          <div class="form-row vat-settings">
+            <div class="form-group checkbox-row">
+              <label
+                ><input type="checkbox" id="set-vat-enabled" /> Ma société est
+                assujettie à la TVA</label
+              >
+            </div>
+            <div class="form-group">
+              <label for="set-vat-rate">Taux (%)</label>
+              <input
+                type="number"
+                id="set-vat-rate"
+                min="0"
+                max="100"
+                step="0.1"
+                value="18"
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary close-modal-btn">
+              Annuler
+            </button>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
